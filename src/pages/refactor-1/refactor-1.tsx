@@ -1,17 +1,23 @@
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useState, ButtonHTMLAttributes } from 'react';
 import { CenteredLayout } from '~/components';
 
 // TODO is there a way to not write this twice? =\
-type ButtonType = 'fast' | 'quality' | 'cheap';
+// type ButtonType = 'fast' | 'quality' | 'cheap';
 
-const buttons: ButtonType[] = ['fast', 'quality', 'cheap'];
+// const buttons: ButtonType[] = ['fast', 'quality', 'cheap'];
+
+enum BUTTON_TYPES {
+  fast = "fast",
+  quality = "quality",
+  cheap = "cheap",
+} 
 
 interface ButtonProps {
-  button: ButtonType;
-  selectedButton: ButtonType | null;
-  setSelectedButton: (value: ButtonType) => void;
-}
+  button: BUTTON_TYPES;
+  selectedButton: BUTTON_TYPES | null;
+  setSelectedButton: (value: BUTTON_TYPES) => void;
+} 
 
 // TODO is it possible to improve this component's interface (props)?
 const Button = ({ button, selectedButton, setSelectedButton }: ButtonProps) => {
@@ -31,12 +37,12 @@ const Button = ({ button, selectedButton, setSelectedButton }: ButtonProps) => {
 };
 
 export const Refactor1 = () => {
-  const [selectedButton, setSelectedButton] = useState<ButtonType | null>(null);
+  const [selectedButton, setSelectedButton] = useState<BUTTON_TYPES | null>(null);
   return (
     <CenteredLayout className="gap-4">
       <div className="text-3xl">See the code</div>
       <div className="grid grid-cols-3 gap-2 w-60">
-        {buttons.map((button) => (
+        {(Object.keys(BUTTON_TYPES) as Array<keyof typeof BUTTON_TYPES>).map((button) => (
           <Button
             key={button}
             button={button}

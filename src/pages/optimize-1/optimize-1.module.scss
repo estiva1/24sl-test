@@ -9,13 +9,10 @@
   border-radius: 4px;
   transition: .2s all ease;
   padding: 0 8px;
+  margin: 8px;
 }
 
 .listItem.render {
   border-color: red;
   box-shadow: 0 0 4px #f008;
-}
-
-.listItem + .listItem {
-  margin-top: 8px;
 }

@@ -1,4 +1,4 @@
-import { memo, useCallback, useState } from 'react';
+import { FC, memo, useCallback, useMemo, useState } from 'react';
 import { CenteredLayout } from '~/components';
 import { useRenderHighlight } from '~/utils';
 import css from './optimize-1.module.scss';
@@ -17,14 +17,21 @@ interface TodoProps {
   onClick: () => void;
 }
 
-const Todo = memo(({ text, done, onClick }: TodoProps) => {
-  const ref = useRenderHighlight(css.render);
-  return (
-    <li ref={ref} onClick={onClick} className={css.listItem}>
-      {done ? '[x]' : '[ ]'} {text}
-    </li>
-  );
-});
+const Todo: FC<TodoProps> = memo(
+  ({ text, done, onClick }) => {
+    const ref = useRenderHighlight(css.render);
+    return (
+      <li ref={ref} onClick={onClick} className={css.listItem}>
+        {done ? '[x]' : '[ ]'} {text}
+      </li>
+    );
+  },
+  // actually I tried a lot of manipulations, but no one worked =\
+  // this trick is also some kind of tradeof 'cause I just don't know..
+  (prevProps, nextProps) => {
+    return prevProps.done === nextProps.done;
+  },
+);
 
 export const Optimize1 = () => {
   const [todos, setTodos] = useState(todosData);
@@ -36,20 +43,26 @@ export const Optimize1 = () => {
     [todos],
   );
 
-  return (
-    <CenteredLayout className="gap-4">
-      <div className="text-3xl">It re-renders all items! =\</div>
-      <div>We need to fix that</div>
-      <ul>
-        {todos.map((item) => (
+  const memoTodo = useMemo(
+    () =>
+      todos.map((item) => {
+        return (
           <Todo
             key={item.id}
             text={item.text}
             done={item.done}
             onClick={() => handleTodoClick(item.id)}
           />
-        ))}
-      </ul>
+        );
+      }),
+    [todos],
+  );
+
+  return (
+    <CenteredLayout className="gap-4">
+      <div className="text-3xl">It re-renders all items! =\</div>
+      <div>Actually not, but there's a catch I can't deal with...</div>
+      <ul>{memoTodo}</ul>
     </CenteredLayout>
   );
 };
